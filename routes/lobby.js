@@ -77,10 +77,10 @@ router.get('/users', function (req, res, next) {
   let users = [];
 
   userCollection.find({}, function (err, found) {
-    for (var user in found) {
+    for (var u in found) {
       users.push({
-        name: user.userName,
-        id: user._id //por el momento mando el Id que mongo le adiere por default
+        name: found[u].name,
+        id: found[u].userName
       });
       res.json(users);
     }
@@ -107,20 +107,18 @@ router.get('/messages', function (req, res, next) {
   //Necesito conocer al usuario del cual quiero encontrar esos mensajes
   let user = 'juan'; //esta variable supongo que me la has de mandar
   let myMessages = [];
-  messageCollection.find({ userName: user }, function (error, found) {
+  console.log('Empezó la búsqueda');
+  //{ $or:[{transmitter: user},{reciever: user}]}).sort({date:-1}
+  messageCollection.find({ $or:[{transmitter: user},{receiver: user}]}, null, {sort: {date: -1 }}, function (error, found) {
     for (var m in found) {
-      console.log('encontró');
-      console.log(found)
       myMessages.push({
-        transmitter: m.transmitter,
-        reciever: m.reciever,
-        date: m.date,
-        text: m.text
+        transmitter: found[m].transmitter,
+        receiver: found[m].receiver,
+        date: found[m].date,
+        text: found[m].text
       })
     }
-    console.log('encontró');
     res.json(myMessages);
-    console.log(myMessages);
   });
   /*  let users = [
     {
