@@ -4,14 +4,16 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
+var edge = require('edge');
 var index = require('./routes/index');
-var chat = require('./routes/chat');
+var lobby = require('./routes/lobby');
 
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
+// PARA USAR C#
+app.use('/', express.static(require('path').join(__dirname, 'scripts'))); 
 app.set('view engine', 'hjs');
 
 // uncomment after placing your favicon in /public
@@ -23,8 +25,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/chat', chat);
-
+app.use('/chat', lobby);
+app.use('/lobby', lobby);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

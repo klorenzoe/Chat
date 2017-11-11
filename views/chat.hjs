@@ -2,14 +2,17 @@
 <html>
   <head>
     <title>Inicio</title>
-
     <script src="/javascripts/jquery-3.2.1.js"></script>
+    <script src="/javascripts/chatJQ.js"></script>
     <link rel='stylesheet' href='/stylesheets/bootstrap.css' />
   </head>
   <body>
     <div class="container text-center">
-          <div class="top: 50%">
-              <button class="btn btn-warning btn-block">fafasdfasdfasd</button>
+          <div class="d-inline-block">
+              <input type="text" class="form-control" id="message"></input>
+          </div>
+          <div class="d-inline-block">
+              <button class="btn btn-warning" id="send" name="{{ friend }}">Presioname!</button>              
           </div>
     </div>
   </body>
