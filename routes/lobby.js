@@ -44,7 +44,7 @@ router.get('/validate', function (req, res, next) {
 });
 
 //carga un chat con cualquier usuario
-router.get('/:user', function (req, res, next) {
+router.get('/user/:user', function (req, res, next) {
   res.render('chat', { friend: req.params.user });
 });
 
