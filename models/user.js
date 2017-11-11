@@ -10,7 +10,7 @@ mongoose.connect('mongodb://localhost/chat', function (err) {
 var schema = mongoose.Schema;
 
 var userSchema = new schema({
-  user: String,
+  userName: String,
   name: String,
   password: String
 });
