@@ -1,10 +1,16 @@
 var express = require('express');
 var router = express.Router();
 let jwt = require('jsonwebtoken');
-const messageCollection = require('../models/message');
-const userCollection = require('../models/user');
 const password = Math.random().toString(36).replace(/[^a-z]+/g, '');
 
+/* Database */
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/chat', function (err) {
+  if (!err)console.log('se conectó la base de datos MongoDB chat');
+  
+});
+const messageCollection = require('../models/message');
+const userCollection = require('../models/user');
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
@@ -67,6 +73,7 @@ router.post('/send', function (req, res, next) {
 // Se espera recibir algo como lo siguiente
 
 router.get('/users', function (req, res, next) {
+  console.log('entro a /users')
   let users = [];
 
   userCollection.find({}, function (err, found) {
@@ -96,12 +103,14 @@ router.get('/users', function (req, res, next) {
 //similar a usuarios... se espera recibir  algo como esto
 
 router.get('/messages', function (req, res, next) {
+  console.log('Entró a messages');
   //Necesito conocer al usuario del cual quiero encontrar esos mensajes
-  let user; //esta variable supongo que me la has de mandar
+  let user = 'juan'; //esta variable supongo que me la has de mandar
   let myMessages = [];
-
   messageCollection.find({ userName: user }, function (error, found) {
     for (var m in found) {
+      console.log('encontró');
+      console.log(found)
       myMessages.push({
         transmitter: m.transmitter,
         reciever: m.reciever,
@@ -109,7 +118,9 @@ router.get('/messages', function (req, res, next) {
         text: m.text
       })
     }
+    console.log('encontró');
     res.json(myMessages);
+    console.log(myMessages);
   });
   /*  let users = [
     {
