@@ -4,14 +4,20 @@
     <title>Inicio</title>
     <script src="/javascripts/jquery-3.2.1.js"></script>
     <script src="/javascripts/lobbyJQ.js"></script>
+
+    <link rel="stylesheet" href="/stylesheets/font-awesome.min.css">
     <link rel='stylesheet' href='/stylesheets/bootstrap.css' />
   </head>
   <body>
     <div class="container text-center">
-            <h3 class="display-3">Todos los usuarios</h3>
+            <div class="sticky-top bg-light">
+              <h3 class="display-3">Usuarios </h3>
+            </div>
             <hr>
-            <div class="list-group" id="usersList">
-                    <button type="button" class="list-group-item list-group-item-action" id="activeUser" name="pepe">These Boots Are Made For Walking</button>
+            <div class="container-fluid">
+                   <div class="row" id="usersList">
+
+                   </div>
             </div>
     </div>
   </body>
