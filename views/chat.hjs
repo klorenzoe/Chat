@@ -16,6 +16,7 @@
                       <button class="btn btn-secondary" id="file" name="{{ friend }}"><i class="fa fa-lg fa-files-o" aria-hidden="true"></i></button>   
                   </span> 
                   <input type="text" class="form-control form-control-lg" id="message">
+                  <span class="input-group-btn">
                       <button class="btn btn-info" id="send" name="{{ friend }}"><i class="fa fa-lg fa-paper-plane-o" aria-hidden="true"></i></button>   
                   </span>                               
               </div>
