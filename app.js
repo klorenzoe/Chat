@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');
 var edge = require('edge');
 var index = require('./routes/index');
 var lobby = require('./routes/lobby');
-
+var fileUploader = require('express-fileupload');
 var app = express();
 
 // view engine setup
@@ -23,7 +23,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(fileUploader());
 app.use('/', index);
 app.use('/chat', lobby);
 app.use('/lobby', lobby);
