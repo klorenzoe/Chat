@@ -1,7 +1,8 @@
 var express = require('express');
 var router = express.Router();
+var edge = require('edge');
 let jwt = require('jsonwebtoken');
-const password = Math.random().toString(36).replace(/[^a-z]+/g, '');
+const password = "xadfgbhknmkkhgrcbklkmopknnhvvffxjg";
 
 /* Database */
 var mongoose = require('mongoose');
@@ -45,28 +46,49 @@ router.get('/validate', function (req, res, next) {
 
 //carga un chat con cualquier usuario
 router.get('/user/:user', function (req, res, next) {
+  //si exte ese usuario que lo deje, si no que retorne un invalid, lo retorno al lobby
   res.render('chat', { friend: req.params.user });
 });
 
 //Metodo que envia el mensaje
 router.post('/send', function (req, res, next) {
-  let message = new messageCollection(req.body);
-  message.save(function (error, saved) {
-    if (error) {
-      res.json({ valid: false });
-    } else {
-      if (saved) {
-        console.log('Se guardó correctamente el elemento');
-        console.log(saved);
-        res.json({ valid: true });
+  //Llamo al método para cifrar de la DLL SDES
+  console.log('llama al metodo de la dll');
+  var encrypt = edge.func({
+    assemblyFile:"dlls\\SDES-DLL.dll",
+    typeName:"SDES.Class1",
+    methodName: "Encrypt"
+  });
+  console.log(encrypt);
+  console.log('Entró al metodo encrypt');
+  var parameters = {
+      data: req.body.text,
+      password: password
+  };
+  console.log(parameters);
+
+  encrypt(parameters, function(error, result){
+    if (error) throw error;
+    let message = new messageCollection({
+      transmitter: req.body.transmitter,
+      receiver: req.body.receiver,
+      date: req.body.date,
+      text: result
+    });
+    
+    message.save(function (error, saved) {
+      if (error) {
+        res.json({ valid: false });
+      } else {
+        if (saved) {
+          console.log('Se guardó correctamente el elemento');
+          console.log(saved);
+          res.json({ valid: true });
+        }
       }
-    }
+    });
 
   });
-
-
-  // si no se pudo guardar
-  // res.json({valid: false});
 });
 
 //Meotodo que retorna toda la lista de usarios
@@ -105,11 +127,12 @@ router.get('/users', function (req, res, next) {
 router.get('/messages', function (req, res, next) {
   console.log('Entró a messages');
   //Necesito conocer al usuario del cual quiero encontrar esos mensajes
-  let user = 'juan'; //esta variable supongo que me la has de mandar
+  let user1 = 'juan'; //esta variable supongo que me la has de mandar
+  let user2 = 'pepe';
   let myMessages = [];
   console.log('Empezó la búsqueda');
   //{ $or:[{transmitter: user},{reciever: user}]}).sort({date:-1}
-  messageCollection.find({ $or:[{transmitter: user},{receiver: user}]}, null, {sort: {date: -1 }}, function (error, found) {
+  messageCollection.find({ $or:[{transmitter: user1, receiver: user2},{transmitter: user2, receiver:user1}]}, null, {sort: {date: -1 }}, function (error, found) {
     for (var m in found) {
       myMessages.push({
         transmitter: found[m].transmitter,
