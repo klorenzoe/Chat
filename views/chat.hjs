@@ -8,40 +8,64 @@
     <link rel='stylesheet' href='/stylesheets/bootstrap.css' />
   </head>
   <body>
-    <div class="fixed-bottom">
-       <div class="container text-center">
-          <div class="container-fluid ">
-              <div class="input-group" >
-                  <span class="input-group-btn">
-                      <button class="btn btn-secondary" id="file" name="{{ friend }}"><i class="fa fa-lg fa-files-o" aria-hidden="true"></i></button>   
-                  </span> 
-                  <input type="text" class="form-control form-control-lg" id="message">
-                  <span class="input-group-btn">
-                      <button class="btn btn-info" id="send" name="{{ friend }}"><i class="fa fa-lg fa-paper-plane-o" aria-hidden="true"></i></button>   
-                  </span>                               
-              </div>
-          </div>
-       </div>
+
+    <div class="container text-center">
+            <div class="fixed-top">
+                    <div class="container text-center">
+                        <div class="container-fluid ">
+                            <div class="input-group" >
+                                <span class="input-group-btn">
+                                    <button class="btn btn-secondary" id="back"><i class="fa fa-chevron-left" aria-hidden="true"></i> Volver</button>   
+                                </span> 
+                                <input type="text" class="form-control form-control-lg" id="message" placeholder="Buscar mensaje">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-info" id="search"><i class="fa fa-lg fa-search" aria-hidden="true"></i> Buscar</button>   
+                                </span>
+                                <span class="input-group-btn">
+                                        <button class="btn btn-secondary" id="all" name="{{ friend }}"><i class="fa fa-times" aria-hidden="true"></i></button>   
+                                </span>                            
+                            </div>
+                        </div>
+                    </div>
+                </div><br><br><br>
+
+                <div class="col-sm-6 pull-left">
+                        <div class="card border border-left-0 border-success bg-light">
+                        <div class="card-body">
+                        <h6 class="card-title"> Friend NAME</h6>
+                        <p class="card-text"> Message </p>        
+                    </div></div></div><br><br>
+                    <div class="col-sm-6 pull-left">
+                        <div class="card border border-right-0 border-info bg-light">
+                        <div class="card-body">
+                        <h6 class="card-title">User NAME</h6>
+                        <p class="card-text"> Messageasdfasdfasdfasdfasdfasdfasdffasdcasdcasdfasdfasdfasdfasdfasdfasdfasdfasfasfasfasdfasdfasdfasdfasfasfasdfasfasdffasdfasdfasdfasdfasdcasdcasdfasdfasfasdfasdfasfasdf </p>        
+                    </div></div></div><br><br>
+                    <div class="col-sm-6 pull-left">
+                        <div class="card border border-left-0 border-success bg-light">
+                        <div class="card-body">
+                        <h6 class="card-title"> Friend NAME</h6>
+                        <p class="card-text"> Message </p>        
+                    </div></div></div><br><br>
+
+            <div class="fixed-bottom">
+               <div class="container text-center">
+                  <div class="container-fluid ">
+                      <div class="input-group" >
+                          <span class="input-group-btn">
+                              <button class="btn btn-secondary" id="file" name="{{ friend }}"><i class="fa fa-lg fa-files-o" aria-hidden="true"></i></button>   
+                          </span> 
+                          <input type="text" class="form-control form-control-lg" id="message" placeholder="Escribe algo...">
+                          <span class="input-group-btn">
+                              <button class="btn btn-info" id="send" name="{{ friend }}"><i class="fa fa-lg fa-paper-plane-o" aria-hidden="true"></i></button>   
+                          </span>                               
+                      </div>
+                  </div>
+               </div>
+            </div>
+
     </div>
 
-    <div class="col-sm-6 pull-left">
-        <div class="card border border-left-0 border-success">
-        <div class="card-body">
-        <h6 class="card-title"> Friend NAME</h6>
-        <p class="card-text"> Message </p>        
-    </div></div></div><br><br>
-    <div class="col-sm-6 pull-left">
-        <div class="card border border-right-0 border-info">
-        <div class="card-body">
-        <h6 class="card-title">User NAME</h6>
-        <p class="card-text"> Messageasdfasdfasdfasdfasdfasdfasdffasdcasdcasdfasdfasdfasdfasdfasdfasdfasdfasfasfasfasdfasdfasdfasdfasfasfasdfasfasdffasdfasdfasdfasdfasdcasdcasdfasdfasfasdfasdfasfasdf </p>        
-    </div></div></div><br><br>
-    <div class="col-sm-6 pull-left">
-        <div class="card border border-left-0 border-success">
-        <div class="card-body">
-        <h6 class="card-title"> Friend NAME</h6>
-        <p class="card-text"> Message </p>        
-    </div></div></div><br><br>
   </body>
 
 </html>
