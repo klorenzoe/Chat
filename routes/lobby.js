@@ -7,8 +7,8 @@ const password = "xadfgbhknmkkhgrcbklkmopknnhvvffxjg";
 /* Database */
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/chat', function (err) {
-  if (!err)console.log('se conectó la base de datos MongoDB chat');
-  
+  if (!err) console.log('se conectó la base de datos MongoDB chat');
+
 });
 const messageCollection = require('../models/message');
 const userCollection = require('../models/user');
@@ -53,21 +53,17 @@ router.get('/user/:user', function (req, res, next) {
 //Metodo que envia el mensaje
 router.post('/send', function (req, res, next) {
   //Llamo al método para cifrar de la DLL SDES
-  console.log('llama al metodo de la dll');
+  console.log('llama al metodo de la dll encrypt');
   var encrypt = edge.func({
-    assemblyFile:"dlls\\SDES-DLL.dll",
-    typeName:"SDES.Class1",
+    assemblyFile: "dlls\\SDES-DLL.dll",
+    typeName: "SDES.Class1",
     methodName: "Encrypt"
   });
-  console.log(encrypt);
-  console.log('Entró al metodo encrypt');
   var parameters = {
-      data: req.body.text,
-      password: password
+    data: req.body.text,
+    password: password
   };
-  console.log(parameters);
-
-  encrypt(parameters, function(error, result){
+  encrypt(parameters, function (error, result) {
     if (error) throw error;
     let message = new messageCollection({
       transmitter: req.body.transmitter,
@@ -75,7 +71,7 @@ router.post('/send', function (req, res, next) {
       date: req.body.date,
       text: result
     });
-    
+
     message.save(function (error, saved) {
       if (error) {
         res.json({ valid: false });
@@ -127,31 +123,39 @@ router.get('/users', function (req, res, next) {
 router.get('/messages', function (req, res, next) {
   console.log('Entró a messages');
   //Necesito conocer al usuario del cual quiero encontrar esos mensajes
-  let user1 = 'juan'; //esta variable supongo que me la has de mandar
-  let user2 = 'pepe';
+  let userTransmitter = 'juan'; //esta variable supongo que me la has de mandar
+  let userReceiver = 'pepe';
   let myMessages = [];
   console.log('Empezó la búsqueda');
-  //{ $or:[{transmitter: user},{reciever: user}]}).sort({date:-1}
-  messageCollection.find({ $or:[{transmitter: user1, receiver: user2},{transmitter: user2, receiver:user1}]}, null, {sort: {date: -1 }}, function (error, found) {
-    for (var m in found) {
-      myMessages.push({
-        transmitter: found[m].transmitter,
-        receiver: found[m].receiver,
-        date: found[m].date,
-        text: found[m].text
-      })
-    }
-    res.json(myMessages);
+  //{ $or: [{ transmitter: user1, receiver: user2 }, { transmitter: user2, receiver: user1 }] 
+
+  var decrypt = edge.func({
+    assemblyFile: "dlls\\SDES-DLL.dll",
+    typeName: "SDES.Class1",
+    methodName: "Decrypt"
   });
-  /*  let users = [
-    {
-      transmitter: "usuario 1",
-      reciever: "usuario amigo de 1",
-      date: 13545132,
-      text: "kjasdfjlkasjklf"
+
+  
+  messageCollection.find({ transmitter: userTransmitter, receiver: userReceiver }, null, { sort: { date: -1 } }, function (error, found) {
+    for (var m in found) {
+      console.log(m);
+      console.log(found[m]);
+      var parameters= { data: found[m].text, password: password };
+
+      decrypt(parameters, function (error, result) {
+        if (error) throw error;
+        console.log('algunos decifrados');
+        console.log(result);
+        myMessages.push({
+          transmitter: found[m].transmitter,
+          receiver: found[m].receiver,
+          date: found[m].date,
+          text: result
+        })
+      });
     }
-  ]
-  */
+  });
+  
 });
 
 
