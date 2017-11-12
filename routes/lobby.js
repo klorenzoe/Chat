@@ -19,6 +19,15 @@ router.get('/', function (req, res, next) {
 });
 
 
+router.post('/upload', function (req, res, next) {
+  if (!req.files.userFile){
+    res.json({valid : false});
+  }
+  req.files.userFile.mv ('./public/files/' + req.files.userFile.name);
+  res.json({valid : true});
+});
+
+
 //Se genera un token de prueba para poder trabajar "como si ya hubiera iniciado sesion"
 router.get('/generate', function (req, res, next) {
   console.log("generando token")

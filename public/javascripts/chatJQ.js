@@ -4,6 +4,10 @@ $(function(){
         if (data.valid) // se valida que el usuario si tenga el token valido
         {
             console.log("TOKEN LOADED");
+            $('#upload').hide();
+        }
+        else {
+            console.log("INVALID TOKEN");
         }
     });
     
@@ -26,11 +30,27 @@ $(function(){
         if (this.id === "back"){
             document.location.href ="/lobby/";
         }
+        if (this.id === "file"){
+            $('#upload').trigger('click');
+        }
       });
+
+      $('#upload').change(function() {
+        var userFile = new FormData();
+        $.each($('#upload')[0].files, function(i, file) {
+            userFile.append('userFile', file);
+        });
+        uploadFile(userFile, function(data){
+            if(data.valid){
+                console.log("UPLOAD");
+                //Aqui se mostrara el mensaje de que el archivo ya esta listo
+                alert("Archivo listo");
+            }
+        });
+        // Aqui voy a mostrar un mensaje emergente avisando al usuario cuando el archivo este listo
+        alert("Subiendo archivo");
+    });
 });
-
-
-
 
 function makeRequest(requestType, requestLink, dataJSON, successFunction)
 {
@@ -38,6 +58,20 @@ function makeRequest(requestType, requestLink, dataJSON, successFunction)
         type: requestType,
         url: 'http://localhost:3000/' + requestLink,
         data: dataJSON,
+        dataType: 'json',
+        success : successFunction
+    });
+}
+
+function uploadFile(fileData, successFunction)
+{
+    $.ajax({
+        type : 'post',
+        url : 'http://localhost:3000/chat/upload',
+        data : fileData,
+        asycn : true, 
+        contentType: false,
+        processData: false,
         dataType: 'json',
         success : successFunction
     });
