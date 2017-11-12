@@ -1,22 +1,23 @@
 $(function(){
+
     makeRequest ('get', 'lobby/validate', {token : window.sessionStorage.userToken}, function(data) {
         if (data.valid) // se valida que el usuario si tenga el token valido
         {
-            window.alert("el token si es valido y no se perdio durante la recarga");
+            console.log("TOKEN LOADED");
         }
     });
-
+    
     $(document).on('click', 'button', function(event) {
         if (this.id === "send"){
             friend = this.name;
             makeRequest ('get', 'lobby/validate', {token : window.sessionStorage.userToken}, function(data) {
                 if (data.valid) // se valida que el usuario si tenga el token valido
                 {
-                    window.alert("el token si es valido y no se perdio durante la recarga");
+                    console.log("VALID TOKEN");
                     makeRequest ('post', 'lobby/send', {transmitter : data.name, receiver : friend, date : Date.now(), text : $('#message').val()}, function(data) {
-                        if (data.valid) // se valida que el usuario si tenga el token valido
+                        if (data.valid) // el mensaje se envio
                         {
-                            window.alert("mensaje guardado");
+                            console.log("MESSAGE SENT");
                         }
                     });
                 }
@@ -24,6 +25,8 @@ $(function(){
         }
       });
 });
+
+
 
 
 function makeRequest(requestType, requestLink, dataJSON, successFunction)

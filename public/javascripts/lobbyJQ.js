@@ -1,14 +1,21 @@
 $(function () {
     //geramos un token de prueba
-    makeRequest('get', 'lobby/generate', { user: "pepe" }, function (data) {
+    makeRequest('get', 'lobby/generate', { user: "Joe", name : "Abraham Gutierrez"}, function (data) {
         window.sessionStorage.userToken = data.token;
+        console.log("TOKEN LOADED");
         // AHora validamos el token y si es valido generamos un boton
         makeRequest('get', 'lobby/validate', { token: window.sessionStorage.userToken }, function (data) {
             if (data.valid) // se valida que el usuario si tenga el token valido
             {
-                window.alert("token valido: " + window.sessionStorage.userToken);
+                console.log("VALID TOKEN");
                 var list = document.getElementById("usersList");
-                list.innerHTML += '<button type="button" class="list-group-item list-group-item-action" id="activeUser" name="juan">juan</button>';
+                list.innerHTML += `<div class="col-sm-6">
+                <div class="card">
+                <div class="card-body">
+                <h4 class="card-title">${data.id}</h4>
+                <p class="card-text">${data.name}</p>
+                </div><button type="button" class="btn btn-info" id="activeUser" name="thisShouldBeTheID"><i class="fa fa-lg fa-comments" aria-hidden="true"></i> Ver Chat</button>
+                </div></div>`
             }
         });
 
