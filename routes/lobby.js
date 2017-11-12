@@ -23,8 +23,31 @@ router.post('/upload', function (req, res, next) {
   if (!req.files.userFile){
     res.json({valid : false});
   }
-  req.files.userFile.mv ('./public/files/' + req.files.userFile.name);
-  res.json({valid : true});
+
+  req.files.userFile.mv ('./public/files/' + req.files.userFile.name, function(error){
+    let Compressor = edge.func({
+      assemblyFile: "dlls\\HuffmanEncoding.dll",
+      typeName: "HuffmanEncoding.Huffman",
+      methodName: "Compressor"
+    });
+    console.log('public\\files\\' + req.files.userFile.name);
+    Compressor('public\\files\\' + req.files.userFile.name, function(error, result){
+      console.log('Dentro del callback de compressor');  
+      if(error) throw error;
+        let file = new messageCollection({
+          transmitter: req.body.transmitter,
+          receiver: req.body.receiver,
+          date: req.body.date,
+          text: 'public\\files\\' + result
+        });
+        console.log('guardado');
+        console.log(file);
+        res.json({valid : true});
+    });
+  });
+
+//.parse enviarselo al huffman y guardarlo en el .mv el archivo comprimido
+  
 });
 
 
