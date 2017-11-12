@@ -23,6 +23,9 @@ $(function(){
                 }
             });
         }
+        if (this.id === "back"){
+            document.location.href ="/lobby/";
+        }
       });
 });
 
