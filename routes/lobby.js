@@ -123,11 +123,11 @@ router.get('/users', function (req, res, next) {
 router.get('/messages', function (req, res, next) {
   console.log('Entró a messages');
   //Necesito conocer al usuario del cual quiero encontrar esos mensajes
-  let user1 = 'juan'; //esta variable supongo que me la has de mandar
-  let user2 = 'pepe';
+  let userTransmitter = 'juan'; //esta variable supongo que me la has de mandar
+  let userReceiver = 'pepe';
   let myMessages = [];
   console.log('Empezó la búsqueda');
-  //{ $or:[{transmitter: user},{reciever: user}]}).sort({date:-1}
+  //{ $or: [{ transmitter: user1, receiver: user2 }, { transmitter: user2, receiver: user1 }] 
 
   var decrypt = edge.func({
     assemblyFile: "dlls\\SDES-DLL.dll",
@@ -136,7 +136,7 @@ router.get('/messages', function (req, res, next) {
   });
 
   
-  messageCollection.find({ $or: [{ transmitter: user1, receiver: user2 }, { transmitter: user2, receiver: user1 }] }, null, { sort: { date: -1 } }, function (error, found) {
+  messageCollection.find({ transmitter: userTransmitter, receiver: userReceiver }, null, { sort: { date: -1 } }, function (error, found) {
     for (var m in found) {
       console.log(m);
       console.log(found[m]);
