@@ -35,9 +35,9 @@ router.post('/upload', function (req, res, next) {
       console.log('Dentro del callback de compressor');  
       if(error) throw error;
         let file = new messageCollection({
-          transmitter: req.body.transmitter,
-          receiver: req.body.receiver,
-          date: req.body.date,
+          transmitter: req.body.transmitter, //2
+          receiver: req.body.receiver, //3
+          date: req.body.date,//4
           text: 'public\\files\\' + result
         });
         console.log('guardado');
@@ -91,12 +91,16 @@ router.post('/send', function (req, res, next) {
     typeName: "SDES.Class1",
     methodName: "Encrypt"
   });
+
   var parameters = {
     data: req.body.text,
     password: password
   };
+
   encrypt(parameters, function (error, result) {
     if (error) throw error;
+    console.log('este es el result');
+    console.log(result);
     let message = new messageCollection({
       transmitter: req.body.transmitter,
       receiver: req.body.receiver,
