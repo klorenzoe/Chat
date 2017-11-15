@@ -22,8 +22,9 @@ router.get('/', function (req, res, next) {
 router.post('/upload', function (req, res, next) {
   if (!req.files.userFile){
     res.json({valid : false});
+    return;
   }
-
+  console.log(req.files.userFile);
   req.files.userFile.mv ('./public/files/' + req.files.userFile.name, function(error){
     let Compressor = edge.func({
       assemblyFile: "dlls\\HuffmanEncoding.dll",
@@ -34,15 +35,15 @@ router.post('/upload', function (req, res, next) {
     Compressor('public\\files\\' + req.files.userFile.name, function(error, result){
       console.log('Dentro del callback de compressor');  
       if(error) throw error;
-        let file = new messageCollection({
-          transmitter: req.body.transmitter, //2
-          receiver: req.body.receiver, //3
-          date: req.body.date,//4
-          text: 'public\\files\\' + result
-        });
-        console.log('guardado');
-        console.log(file);
-        res.json({valid : true});
+      let file = new messageCollection({
+        transmitter: req.body.transmitter, //2
+        receiver: req.body.receiver, //3
+        date: req.body.date,//4
+        text: 'public\\files\\' + result
+      });
+      console.log('guardado');
+      console.log(file);
+      res.json({valid : true});
     });
   });
 
