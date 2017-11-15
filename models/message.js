@@ -12,6 +12,7 @@ var messageSchema = new schema({
   transmitter: String,
   receiver: String,
   date: String,
-  text: String
+  text: String,
+  isFile: Boolean
 });
 module.exports = mongoose.model('messageModel', messageSchema);
