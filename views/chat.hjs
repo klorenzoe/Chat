@@ -17,7 +17,7 @@
                                 <span class="input-group-btn">
                                     <button class="btn btn-secondary" id="back"><i class="fa fa-chevron-left" aria-hidden="true"></i> Volver</button>   
                                 </span> 
-                                <input type="text" class="form-control form-control-lg" id="message" placeholder="Buscar mensaje">
+                                <input type="text" class="form-control form-control-lg" id="searchMessage" placeholder="Buscar mensaje">
                                 <span class="input-group-btn">
                                     <button class="btn btn-info" id="search"><i class="fa fa-lg fa-search" aria-hidden="true"></i> Buscar</button>   
                                 </span>

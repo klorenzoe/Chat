@@ -33,6 +33,9 @@ $(function(){
         if (this.id === "file"){
             $('#upload').trigger('click');
         }
+        if (this.id === "search"){
+            // Search
+        }
       });
 
       $('#upload').change(function() {
