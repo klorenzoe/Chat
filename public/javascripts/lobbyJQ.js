@@ -7,15 +7,19 @@ $(function () {
         makeRequest('get', 'lobby/validate', { token: window.sessionStorage.userToken }, function (data) {
             if (data.valid) // se valida que el usuario si tenga el token valido
             {
-                console.log("VALID TOKEN");
-                var list = document.getElementById("usersList");
-                list.innerHTML += `<div class="col-sm-6">
-                <div class="card">
-                <div class="card-body">
-                <h4 class="card-title">${data.id}</h4>
-                <p class="card-text">${data.name}</p>
-                </div><button type="button" class="btn btn-info" id="activeUser" name="thisShouldBeTheID"><i class="fa fa-lg fa-comments" aria-hidden="true"></i> Ver Chat</button>
-                </div></div>`
+                makeRequest('get', 'lobby/users', {}, function(users){
+                    console.log("VALID TOKEN");
+                    var list = document.getElementById("usersList");
+                    $.each(users, function(index, value){
+                        list.innerHTML += `<div class="col-sm-6">
+                        <div class="card">
+                        <div class="card-body">
+                        <h4 class="card-title">${value.id}</h4>
+                        <p class="card-text">${value.name}</p>
+                        </div><button type="button" class="btn btn-info" id="activeUser" name="${value.id}"><i class="fa fa-lg fa-comments" aria-hidden="true"></i> Ver Chat</button>
+                        </div></div>`
+                    });
+                });
             }
         });
 

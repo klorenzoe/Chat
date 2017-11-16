@@ -57,3 +57,7 @@ typings/
 # dotenv environment variables file
 .env
 
+# Contenido de la carpeta file
+/public/files/*
+/public/files/.info
+

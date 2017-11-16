@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/stylesheets/font-awesome.min.css">
     <link rel='stylesheet' href='/stylesheets/bootstrap.css' />
   </head>
-  <body>
+  <body style='margin-top: 75px; margin-bottom: 75px;'>
     <input type="file" id="upload" name="userFile" />  
     <div class="container">
             <div class="fixed-top">
@@ -27,29 +27,29 @@
                             </div>
                         </div>
                     </div>
-                </div><br><br><br>
+                </div>
 
-            <div class = "messages">
-                <div class="col-sm-6 pull-left">
-                    <div class="card border border-left-0 border-success bg-light">
-                    <div class="card-body">
-                    <h6 class="card-title"> Friend NAME</h6>
-                    <p class="card-text"> Message </p>        
-                </div></div></div><br><br>
-                <div class="col-sm-6 pull-left">
+            <div id = "messages" class="pre-scrollable">
+                <div class="col-sm-8">
+                        <div class="card border border-left-0 border-success bg-light">
+                        <div class="card-body">
+                        <h6 class="card-title"> Friend NAME</h6>
+                        <p class="card-text"> Message </p>        
+                </div></div></div>
+                <div class="col-sm-8 my-2 pull-right">
                     <div class="card border border-right-0 border-info bg-light">
                     <div class="card-body">
                     <h6 class="card-title">User NAME</h6>
                     <p class="card-text"> Messageasdfasdfasdfasdfasdfasdfasdffasdcasdcasdfasdfasdfasdfasdfasdfasdfasdfasfasfasfasdfasdfasdfasdfasfasfasdfasfasdffasdfasdfasdfasdfasdcasdcasdfasdfasfasdfasdfasfasdf </p>        
-                </div></div></div><br><br>
-                <div class="col-sm-6 pull-left">
-                    <div class="card border border-left-0 border-success bg-light">
-                    <div class="card-body">
-                    <h6 class="card-title"> Friend NAME</h6>
-                    <p class="card-text"> Message </p>        
-                </div></div></div><br><br>
+                </div></div></div>
+                <div class="col-sm-8 my-2 pull-right">
+                        <div class="card border border-right-0 border-warning bg-light">
+                        <div class="card-body">
+                        <h6 class="card-title">${messageJSON.transmitter}</h6>
+                        <p class="card-text"> ${messageJSON.transmiiter} te ha enviado un archivo.</p>     
+                        <a href="#" class="btn btn-warning">Descargar</a>   
+                </div></div></div>
             </div>
-
             <div class="fixed-bottom">
                <div class="container text-center">
                   <div class="container-fluid ">
