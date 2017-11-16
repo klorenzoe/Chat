@@ -36,14 +36,15 @@ router.post('/upload', function (req, res, next) {
       console.log('Dentro del callback de compressor');  
       if(error) throw error;
       let file = new messageCollection({
-        transmitter: req.body.transmitter, //2
-        receiver: req.body.receiver, //3
-        date: req.body.date,//4
-        text: 'public\\files\\' + result
-      });
-      console.log('guardado');
-      console.log(file);
-      res.json({valid : true});
+          transmitter: req.files.transmitter, //2
+          receiver: req.files.receiver, //3
+          date: req.files.date,//4
+          text:  result,
+          isFile: true
+        });
+        console.log('guardado');
+        console.log(file);
+        res.json({valid : true});
     });
   });
 
@@ -106,7 +107,8 @@ router.post('/send', function (req, res, next) {
       transmitter: req.body.transmitter,
       receiver: req.body.receiver,
       date: req.body.date,
-      text: result
+      text: result,
+      isFile = false
     });
 
     message.save(function (error, saved) {
@@ -193,6 +195,21 @@ router.get('/messages', function (req, res, next) {
     }
   });
   
+});
+
+router.get('/download/:name', function (req, res, next) {
+  //descomprimir archivos
+  //'public\\files\\' + req.params.name
+  let Decompress = edge.func({
+    assemblyFile: "dlls\\HuffmanEncoding.dll",
+    typeName: "HuffmanEncoding.Huffman",
+    methodName: "Descompressor"
+  });
+  Decompress('public\\files\\' + req.params.name, function(error, result){
+      console.log('dentro del callback de descompress');
+      console.log(result);
+      res.download('public\\files\\' + result);
+  });
 });
 
 
