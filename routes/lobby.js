@@ -52,13 +52,6 @@ router.post('/upload', function (req, res, next) {
   
 });
 
-
-//Se genera un token de prueba para poder trabajar "como si ya hubiera iniciado sesion"
-router.get('/generate', function (req, res, next) {
-  console.log("generando token")
-  res.json({ token: jwt.sign({ name: req.query.name, id: req.query.user }, password) });
-});
-
 //Se valida el token del usuario
 router.get('/validate', function (req, res, next) {
   try {
