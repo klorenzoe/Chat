@@ -1,10 +1,12 @@
 $(function(){
 
+
     makeRequest ('get', 'lobby/validate', {token : window.sessionStorage.userToken}, function(data) {
         if (data.valid) // se valida que el usuario si tenga el token valido
         {
             console.log("TOKEN LOADED");
             $('#upload').hide();
+            $('#messages').css('overflow', 'hidden');
         }
         else {
             console.log("INVALID TOKEN");
@@ -36,6 +38,9 @@ $(function(){
         if (this.id === "search"){
             // Search
         }
+        if (this.id === "all"){
+            addMessages([{transmitter : "Joe", receiver : "thisShouldBeTheID", date : Date.now(), text : $('#message').val(), isFile : true}, {transmitter : "thisShouldBeTheID", receiver : "Joe", date : Date.now(), text : $('#message').val(), isFile : true}]);
+        }
       });
 
       $('#upload').change(function() {
@@ -61,6 +66,7 @@ $(function(){
             }
         });
     });
+
 });
 
 function makeRequest(requestType, requestLink, dataJSON, successFunction)
@@ -88,45 +94,53 @@ function uploadFile(fileData, successFunction)
     });
 }
 
-function addMessage(messageJSON){
-    let button = "";
-    if ($('#send').attr('name') == messageJSON.transmitter){
+function addMessages(messagesJSON){
+    //$('#messages').empty();
+    $.each(messagesJSON, function(index, value){
+        $('#messages').append(getPanel(value, $('#send').attr('name')));
+    });
+    $('#messages').css('overflow', 'hidden');
+}
+
+function getPanel(messageJSON, transmitter){
+    let panel = "";
+    if (transmitter === messageJSON.transmitter){
         if (messageJSON.isFile){
-            button = `<div class="col-sm-6 my-2 pull-left">
-            <div class="card border border-left-0 border-success bg-light">
+            panel = `<div class="col-sm-8 my-2 pull-left">
+            <div class="card border border-left-0 border-secondary bg-light">
             <div class="card-body">
             <h6 class="card-title">${messageJSON.transmitter}</h6>
-            <p class="card-text"> ${messageJSON.transmitter} te ha enviado un archivo.</p>     
-            <a href="${messageJSON.text}" class="btn btn-warning">Descargar</a>   
-            </div></div></div><br><br>`
+            <p class="card-text"> Te han enviado un archivo.</p>     
+            <button name="${messageJSON.text}" class="btn btn-warning" id="donwload">Descargar</a>   
+            </div></div></div>`
         }
         else {
-            button = `<div class="col-sm-6 my-2 pull-left">
+            panel = `<div class="col-sm-8 my-2 pull-left">
             <div class="card border border-left-0 border-success bg-light">
             <div class="card-body">
             <h6 class="card-title">${messageJSON.transmitter}</h6>
             <p class="card-text"> ${messageJSON.text}</p>  
-            </div></div></div><br><br>`
+            </div></div></div>`
         }
     }
     else{
         if (messageJSON.isFile){
-            button = `<div class="col-sm-6 my-2 pull-right">
-            <div class="card border border-left-0 border-warning bg-light">
+            panel = `<div class="col-sm-8 my-2 pull-right">
+            <div class="card border border-right-0 border-secondary bg-light">
             <div class="card-body">
-            <h6 class="card-title">${messageJSON.receiver}</h6>
-            <p class="card-text"> ${messageJSON.receiver} has enviado un archivo.</p>     
-            <a href="${messageJSON.text}" class="btn btn-warning">Descargar</a>   
-            </div></div></div><br><br>`
+            <h6 class="card-title">${messageJSON.transmitter}</h6>
+            <p class="card-text"> Tú has enviado un archivo.</p>     
+            <button name="${messageJSON.text}" class="btn btn-warning" id="donwload">Descargar</a>   
+            </div></div></div>`
         }
         else {
-            button = `<div class="col-sm-6 my-2 pull-right">
-            <div class="card border border-left-0 border-info bg-light">
+            panel = `<div class="col-sm-8 my-2 pull-right">
+            <div class="card border border-right-0 border-info bg-light">
             <div class="card-body">
-            <h6 class="card-title">${messageJSON.receiver}</h6>
+            <h6 class="card-title">${messageJSON.transmitter}</h6>
             <p class="card-text"> ${messageJSON.text}</p>  
-            </div></div></div><br><br>`
+            </div></div></div>`
         }
-        $('#messages').append(button);
     }
+    return panel;
 }

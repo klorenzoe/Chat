@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>{{title}}</title>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <meta "utf-8">
+  </head>
+  <body >
+    <div class="container">
+      <div class="col-sm-6 mx-auto">
+        <div class="card mt-5">
+          <div class="card-body">
+            <h1 class="text-center">
+               Iniciar secio
+            </h1></br>
+            <div class="alert alert-danger">
+                {{mensaje}}    
+            </div>
+              </div>
+
+            <form action="/login" method="post">
+              <div class="form-group">
+                <label for="Nombre de Usuario">Nombre de Usuario</label>
+                <input type="text" name="username" class="form-control">
+              </div>
+              <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" name="password" class="form-control">
+              </div>
+              <input type="submit" class="btn btn-dark btn-lg">
+            </form>
+
+            <hr>
+            <div class="text-center">
+              <p>¿Aún no tienes cuenta? <a href="/signup">Regístrate</a></p>
+              <p>Volver a inicio <a href="/">Chat</a>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
