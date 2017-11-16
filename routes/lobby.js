@@ -108,7 +108,7 @@ router.post('/send', function (req, res, next) {
       receiver: req.body.receiver,
       date: req.body.date,
       text: result,
-      isFile = false
+      isFile: false
     });
 
     message.save(function (error, saved) {

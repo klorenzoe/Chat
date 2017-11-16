@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var User = require('../models/users'); 
+var edge = require('edge');
+var User = require('../models/user'); 
 const jwt = require('jsonwebtoken');
 const passphrase = "xadfgbhknmkkhgrcbklkmopknnhvvffxjg";
 
@@ -22,21 +23,41 @@ router.get('/inicio', function(req, res, next) {
 });
 
 router.post('/signup', function(req, res){
+console.log('dentro de suscribirse..');
+var encrypt = edge.func({
+  assemblyFile: "dlls\\SDES-DLL.dll",
+  typeName: "SDES.Class1",
+  methodName: "Encrypt"
+});
+var parameters = {
+  data: req.body.password,
+  password: passphrase
+};
 
+encrypt(parameters, function (error, result) {
+  if (error) throw error;
+  console.log('este es el result');
+  console.log(result);
   var newUser = new User();
   newUser.userName = req.body.username;
   newUser.name = req.body.nombre;
-  newUser.password = req.body.password;; //hay que cifrar aqui
+  newUser.password = result;
 
-  newUser.save(function(err, user){
-    if(err){
+  newUser.save(function (error, saved) {
+    if (error) {
+      console.log('cayó en un error');
       console.log(err);
       return res.status(500).send();
+    } else {
+      if (saved) {
+        console.log('Ingresado exitosamente el elemento')
+        console.log(saved);
+        return res.status(200).send(); 
+      }
     }
-    console.log('Ingresado exitosamente')
-    return res.status(200).send();  
   });
-  res.json({ valid: true });
+
+});
 })
 
 router.post('/login', function(req, res){
