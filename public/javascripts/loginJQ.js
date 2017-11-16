@@ -1,7 +1,9 @@
 $(function(){
 
     $('#error').hide();
-
+    if (window.sessionStorage.userToken){
+        window.location.href = "/lobby";
+    }
     //Leemos algunos eventos
     $('#login').click(function(){
         $('#error').fadeOut();
@@ -17,7 +19,8 @@ $(function(){
         {
             makeRequest('post', 'login', {username : $('#username').val(), password : $('#password').val()}, function(data){
                 if (data.valid){
-                    window.sessionStorage = data.token;
+                    window.sessionStorage.userToken = null;
+                    window.sessionStorage.userToken = data.token;
                     window.location.href = "/lobby"
                 }else{
                     $('#error').html(data.message);
@@ -31,7 +34,7 @@ $(function(){
     {
         $.ajax({
             type: requestType,
-            url: 'http://localhost:3000/' + requestLink,
+            url: 'http://192.168.43.167:3000/' + requestLink,
             data: dataJSON,
             dataType: 'json',
             success : successFunction

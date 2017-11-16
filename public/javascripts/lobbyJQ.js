@@ -3,7 +3,7 @@ $(function () {
     makeRequest('get', 'lobby/validate', { token: window.sessionStorage.userToken }, function (data) {
         if (data.valid) // se valida que el usuario si tenga el token valido
         {
-            makeRequest('get', 'lobby/users', {}, function(users){
+            makeRequest('get', 'lobby/users', {id: data.id}, function(users){
                 console.log("VALID TOKEN");
                 var list = document.getElementById("usersList");
                 $.each(users, function(index, value){
@@ -16,6 +16,9 @@ $(function () {
                     </div></div>`
                 });
             });
+        }
+        else{
+            window.location.href = 'login';
         }
     });
 
@@ -30,7 +33,7 @@ $(function () {
 function makeRequest(requestType, requestLink, dataJSON, successFunction) {
     $.ajax({
         type: requestType,
-        url: 'http://localhost:3000/' + requestLink,
+        url: 'http://192.168.43.167:3000/' + requestLink,
         data: dataJSON,
         dataType: 'json',
         success: successFunction

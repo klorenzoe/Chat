@@ -9,20 +9,20 @@ $(function(){
             $('#error').html("Usuario no válido.");
             $('#error').fadeIn();
         }
-        else if ($('#password').val() === ""){
-            $('#error').html("Constraseña no válida");
-            $('#error').fadeIn();
-        }
         else if ($('#name').val() === ""){
             $('#error').html("Nombre no válido");
             $('#error').fadeIn();
         }
+        else if ($('#password').val() === ""){
+            $('#error').html("Constraseña no válida");
+            $('#error').fadeIn();
+        }
         else 
         {
-            makeRequest('post', 'singup', {username : $('#username').val(), password : $('#password').val(), nombre: $('#name').val()}, function(data){
+            makeRequest('post', 'signup', {username : $('#username').val(), password : $('#password').val(), nombre: $('#name').val()}, function(data){
                 if (data.valid){
-                    window.sessionStorage = data.token;
-                    window.location.href = "/lobby"
+                    window.sessionStorage.userToken = data.token;
+                    window.location.href = "/lobby";
                 }else{
                     $('#error').fadeOut();
                     $('#error').html(data.message);
@@ -36,7 +36,7 @@ $(function(){
     {
         $.ajax({
             type: requestType,
-            url: 'http://localhost:3000/' + requestLink,
+            url: 'http://192.168.43.167:3000/' + requestLink,
             data: dataJSON,
             dataType: 'json',
             success : successFunction

@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var edge = require('edge');
-let jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const password = "xadfgbhknmkkhgrcbklkmopknnhvvffxjg";
 
 /* Database */
@@ -55,7 +55,7 @@ router.post('/upload', function (req, res, next) {
 //Se valida el token del usuario
 router.get('/validate', function (req, res, next) {
   try {
-
+    console.log(req.body.token);
     let data = jwt.verify(req.query.token, password);
     data.valid = true;
     console.log(data);
@@ -125,15 +125,15 @@ router.post('/send', function (req, res, next) {
 router.get('/users', function (req, res, next) {
   console.log('entro a /users')
   let users = [];
-
-  userCollection.find({}, function (err, found) {
+  userCollection.find( { userName : { $ne : req.query.id} }, function (err, found) {
     for (var u in found) {
       users.push({
         name: found[u].name,
         id: found[u].userName
       });
-      res.json(users);
     }
+    
+    res.json(users).end();
   });
 
   /* let users = [
@@ -155,8 +155,8 @@ router.get('/users', function (req, res, next) {
 router.get('/messages', function (req, res, next) {
   console.log('Entró a messages');
   //Necesito conocer al usuario del cual quiero encontrar esos mensajes
-  let userTransmitter = 'juan'; //esta variable supongo que me la has de mandar
-  let userReceiver = 'pepe';
+  let userTransmitter = req.query.transmitter; //esta variable supongo que me la has de mandar
+  let userReceiver = req.query.receiver;
   let myMessages = [];
   console.log('Empezó la búsqueda');
   //{ $or: [{ transmitter: user1, receiver: user2 }, { transmitter: user2, receiver: user1 }] 
@@ -168,7 +168,10 @@ router.get('/messages', function (req, res, next) {
   });
 
   
-  messageCollection.find({ transmitter: userTransmitter, receiver: userReceiver }, null, { sort: { date: -1 } }, function (error, found) {
+if(req.query.both){
+  userTransmitter = req.query.transmitter;
+  userReceiver = req.query.receiver;
+  messageCollection.find({ $or: [{ transmitter: userTransmitter, receiver: userReceiver }, { transmitter: userReceiver, receiver: userTransmitter }]  }, null, { sort: { date: -1 } }, function (error, found) {
     for (var m in found) {
       console.log(m);
       console.log(found[m]);
@@ -186,7 +189,30 @@ router.get('/messages', function (req, res, next) {
         })
       });
     }
+    res.json({valid : true, messages : myMessages });
   });
+}else{
+  messageCollection.find({ transmitter: userTransmitter, receiver: userReceiver }, null, { sort: { date:  -1 } }, function (error, found) {
+    for (var m in found) {
+      console.log(m);
+      console.log(found[m]);
+      var parameters= { data: found[m].text, password: password };
+
+      decrypt(parameters, function (error, result) {
+        if (error) throw error;
+        console.log('algunos decifrados');
+        console.log(result);
+        myMessages.push({
+          transmitter: found[m].transmitter,
+          receiver: found[m].receiver,
+          date: found[m].date,
+          text: result
+        })
+      });
+    }
+    res.json({valid : true, messages : myMessages });
+  });
+}
   
 });
 

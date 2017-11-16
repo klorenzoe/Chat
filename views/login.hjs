@@ -17,12 +17,10 @@
       <div class="col-sm-6 mx-auto">
         <div class="card mt-5">
           <div class="card-body">
-            <h1 class="text-center">
-               Iniciar sesión
-            </h1></br>
+              <img class="card-img-top" src="/images/node.jpeg" alt="Node logotype">
             <div class="alert alert-danger" id="error"> 
             </div>
-
+              <hr>
               <div class="form-group">
                   <label for="Nombre de Usuario">Nombre de Usuario</label>
                   <input type="text" name="username" id ="username" class="form-control">
@@ -31,7 +29,7 @@
                   <label for="password">Contraseña</label>
                   <input type="password" name="password" id ="password" class="form-control">
                 </div>
-                <button class="btn btn-dark btn-block btn-lg" id="login">Iniciar Sesión</button>
+                <button class="btn btn-dark btn-block btn-lg" id="login">Iniciar sesión</button>
 
             <hr>
             <div class="text-center">
