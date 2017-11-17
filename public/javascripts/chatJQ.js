@@ -86,7 +86,7 @@ function makeRequest(requestType, requestLink, dataJSON, successFunction)
 {
     $.ajax({
         type: requestType,
-        url: 'http://192.168.43.167:3000/' + requestLink,
+        url: 'http://localhost:3000/' + requestLink,
         data: dataJSON,
         dataType: 'json',
         success : successFunction
@@ -97,7 +97,7 @@ function uploadFile(fileData, successFunction)
 {
     $.ajax({
         type : 'post',
-        url : 'http://192.168.43.167:3000/chat/upload',
+        url : 'http://localhost:3000/chat/upload',
         data : fileData,
         asycn : true, 
         contentType: false,
