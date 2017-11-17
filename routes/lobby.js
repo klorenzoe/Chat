@@ -202,13 +202,6 @@ router.get('/download/:name', function (req, res, next) {
 });
 
 router.get('/search', function (req, res, next) {
-  //Envian una palabra, cifro esa palabra y despues busco todos los mensajes con esa palabra.
-  //retornon una lista.
-  console.log('SEARCHHHHHHHHHHH');
-  console.log('COSAS QUE ME ENVIA');
-  console.log('transmitter: ' + req.query.transmitter);
-  console.log('receiver: ' + req.query.receiver);
-  console.log('palabra a buscar: ' + req.query.word);
   let myMessages = [];
   let encrypt = edge.func({
     assemblyFile: "dlls\\SDES-DLL.dll",
@@ -246,8 +239,10 @@ router.get('/search', function (req, res, next) {
   });//encrypt
 });
 
-
-
-
+router.get('/count', function (req, res, next) {
+  messageCollection.count(function(error, now){
+    res.json({ valid: true, count: now });
+  });
+});
 
 module.exports = router;
