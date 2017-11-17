@@ -215,7 +215,6 @@ router.get('/search', function (req, res, next) {
     typeName: "SDES.Class1",
     methodName: "Encrypt"
   });
-
   encrypt({ data: req.query.word, password: password }, function (err, search) {
     let userTransmitter = req.query.transmitter;
     let userReceiver = req.query.receiver;
