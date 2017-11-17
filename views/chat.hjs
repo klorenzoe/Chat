@@ -13,7 +13,7 @@
     <div class="container">
             <div class="fixed-top">
                     <div class="container text-center">
-                        <div class="container-fluid ">
+                        <div class="container-fluid">
                             <div class="input-group" >
                                 <span class="input-group-btn">
                                     <button class="btn btn-secondary" id="back"><i class="fa fa-chevron-left" aria-hidden="true"></i> Volver</button>   
@@ -23,7 +23,7 @@
                                     <button class="btn btn-info" name="{{ friend }}" id="search"><i class="fa fa-lg fa-search" aria-hidden="true"></i> Buscar</button>   
                                 </span>
                                 <span class="input-group-btn">
-                                        <button class="btn btn-secondary" id="all" name="{{ friend }}"><i class="fa fa-times" aria-hidden="true"></i></button>   
+                                        <button class="btn btn-info" id="all" name="{{ friend }}"><i class="fa fa-refresh" aria-hidden="true"></i></button>   
                                 </span>                            
                             </div>
                         </div>
@@ -38,7 +38,7 @@
                   <div class="container-fluid ">
                       <div class="input-group" >
                           <span class="input-group-btn">
-                              <button class="btn btn-secondary" id="file" name="{{ friend }}"><i class="fa fa-lg fa-files-o" aria-hidden="true"></i></button>   
+                              <button class="btn btn-dark" id="file" name="{{ friend }}"><i class="fa fa-upload" aria-hidden="true"></i></button>   
                           </span> 
                           <input type="text" class="form-control form-control-lg" id="message" placeholder="Escribe algo...">
                           <span class="input-group-btn">

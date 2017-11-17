@@ -15,17 +15,25 @@ $(function(){
                 if (data.valid) // el mensaje se envio
                 {
                     addMessages(data.messages);
+                    scrollDown();
+                }else{
+                    //Mensaje no enviado
+                    $.notify("No podemos recuperar tus mensajes.", 'error');
                 }
             });
         }
         else {
             console.log("INVALID TOKEN");
+            delete windows.sessionStorage.userToken;
             window.location.href = "login";
         }
     });
     
     $(document).on('click', 'button', function(event) {
         if (this.id === "send"){
+            if (!$('#message').val()){
+                return;
+            }
             friend = this.name;
             makeRequest ('get', 'lobby/validate', {token : window.sessionStorage.userToken}, function(data) {
                 if (data.valid) // se valida que el usuario si tenga el token valido
@@ -35,6 +43,10 @@ $(function(){
                         if (data.valid) // el mensaje se envio
                         {
                             console.log("MESSAGE SENT");
+                            $('#message').val("");
+                            loadMessages(friend);
+                        }else{
+                            $.notify("El mensaje no pudo ser enviado.", 'error');
                         }
                     });
                 }
@@ -48,14 +60,19 @@ $(function(){
         }
         if (this.id === "search"){
             friend = this.name;
+            if (!$('#searchMessage').val()){
+                return;
+            }
             makeRequest ('get', 'lobby/validate', {token : window.sessionStorage.userToken}, function(data) {
                 if (data.valid) // se valida que el usuario si tenga el token valido
                 {
                     console.log("VALID TOKEN");
                     makeRequest ('get', 'chat/search', {transmitter : data.id, receiver : friend, word : $('#searchMessage').val()}, function(data) {
-                        if (data.valid) // el mensaje se envio
+                        if (data.valid) // se recupero algo de la busqueda
                         {
                             addMessages(data.messages);
+                        }else{
+                            $.notify("Parece que no encontramos nada.", 'error');
                         }
                     });
                 }
@@ -63,27 +80,19 @@ $(function(){
         }
         if (this.id === "download"){
             fileName = this.name;
+            $.notify("Preparando para descargar el archivo.", 'info');
             makeRequest ('get', 'lobby/validate', {token : window.sessionStorage.userToken}, function(data) {
                 if (data.valid) // se valida que el usuario si tenga el token valido
                 {
+                    $.notify("Tu archivo se está descargando.", 'success');
                     window.location.href = '/chat/download/' + fileName;
+                }else{
+                    $.notify("No se pudo descargar el archivo.", 'error');
                 }
             });
         }
         if (this.id === "all"){
-            friend = this.name;
-            makeRequest ('get', 'lobby/validate', {token : window.sessionStorage.userToken}, function(data) {
-                if (data.valid) // se valida que el usuario si tenga el token valido
-                {
-                    console.log("VALID TOKEN");
-                    makeRequest ('get', 'chat/messages', {transmitter : data.id, receiver : friend}, function(data) {
-                        if (data.valid) // el mensaje se envio
-                        {
-                            addMessages(data.messages);
-                        }
-                    });
-                }
-            });
+            loadMessages(this.name);
         }
       });
 
@@ -144,6 +153,7 @@ function addMessages(messagesJSON){
     });
     $('#messages').append(content);
     $('#messages').css('overflow', 'hidden');
+    scrollDown();
 }
 
 function getPanel(messageJSON, transmitter){
@@ -154,8 +164,8 @@ function getPanel(messageJSON, transmitter){
             <div class="card border border-left-0 border-secondary bg-light">
             <div class="card-body">
             <h6 class="card-title">${messageJSON.transmitter}</h6>
-            <p class="card-text"> Te han enviado un archivo.</p>     
-            <button name="${messageJSON.text}" class="btn btn-warning" id="download">Descargar</a>   
+            <p class="card-text"> Te he enviado un archivo.</p>     
+            <button name="${messageJSON.text}" class="btn btn-dark btn-block" id="download"><i class="fa fa-download" aria-hidden="true"></i> Descargar</a>   
             </div></div></div>`
         }
         else {
@@ -172,19 +182,40 @@ function getPanel(messageJSON, transmitter){
             panel = `<div class="col-sm-8 my-2 pull-right">
             <div class="card border border-right-0 border-secondary bg-light">
             <div class="card-body">
-            <h6 class="card-title">${messageJSON.transmitter}</h6>
-            <p class="card-text"> Tú has enviado un archivo.</p>     
-            <button name="${messageJSON.text}" class="btn btn-warning" id="download">Descargar</a>   
+            <h6 class="card-title">Tú</h6>
+            <p class="card-text"> Has enviado un archivo.</p>     
+            <button name="${messageJSON.text}" class="btn btn-dark btn-block" id="download"><i class="fa fa-download" aria-hidden="true"></i> Descargar</a>   
             </div></div></div>`
         }
         else {
             panel = `<div class="col-sm-8 my-2 pull-right">
             <div class="card border border-right-0 border-info bg-light">
             <div class="card-body">
-            <h6 class="card-title">${messageJSON.transmitter}</h6>
+            <h6 class="card-title">Tú</h6>
             <p class="card-text"> ${messageJSON.text}</p>  
             </div></div></div>`
         }
     }
     return panel;
+}
+
+function scrollDown(){
+    $("html, body").animate({ scrollTop: $(document).height() }, 0);
+}
+
+function loadMessages(friend){
+    makeRequest ('get', 'lobby/validate', {token : window.sessionStorage.userToken}, function(data) {
+        if (data.valid) // se valida que el usuario si tenga el token valido
+        {
+            console.log("VALID TOKEN");
+            makeRequest ('get', 'chat/messages', {transmitter : data.id, receiver : friend}, function(data) {
+                if (data.valid) // el mensaje se envio
+                {
+                    addMessages(data.messages);
+                }else{
+                    $.notify("No podemos recuperar tus mensajes.", 'error');
+                }
+            });
+        }
+    });
 }

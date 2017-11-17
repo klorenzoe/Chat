@@ -7,8 +7,10 @@ $(function () {
     makeRequest('get', 'lobby/validate', { token: window.sessionStorage.userToken }, function (data) {
         if (data.valid) // se valida que el usuario si tenga el token valido
         {
+            console.log("VALID TOKEN");
+            $('#userTag').append(data.id);
             makeRequest('get', 'lobby/users', {id: data.id}, function(users){
-                console.log("VALID TOKEN");
+                
                 var list = document.getElementById("usersList");
                 $.each(users, function(index, value){
                     list.innerHTML += `<div class="col-sm-6">
