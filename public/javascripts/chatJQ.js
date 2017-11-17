@@ -138,9 +138,11 @@ function uploadFile(fileData, successFunction)
 
 function addMessages(messagesJSON){
     $('#messages').empty();
+    let content = "";
     $.each(messagesJSON, function(index, value){
-        $('#messages').append(getPanel(value, $('#send').attr('name')));
+        content  = getPanel(value, $('#send').attr('name')) + content;
     });
+    $('#messages').append(content);
     $('#messages').css('overflow', 'hidden');
 }
 

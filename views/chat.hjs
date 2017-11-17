@@ -20,7 +20,7 @@
                                 </span> 
                                 <input type="text" class="form-control form-control-lg" id="searchMessage" placeholder="Buscar mensaje">
                                 <span class="input-group-btn">
-                                    <button class="btn btn-info" id="search"><i class="fa fa-lg fa-search" aria-hidden="true"></i> Buscar</button>   
+                                    <button class="btn btn-info" name="{{ friend }}" id="search"><i class="fa fa-lg fa-search" aria-hidden="true"></i> Buscar</button>   
                                 </span>
                                 <span class="input-group-btn">
                                         <button class="btn btn-secondary" id="all" name="{{ friend }}"><i class="fa fa-times" aria-hidden="true"></i></button>   
