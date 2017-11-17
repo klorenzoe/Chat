@@ -11,6 +11,12 @@ $(function(){
             console.log("TOKEN LOADED");
             $('#upload').hide();
             $('#messages').css('overflow', 'hidden');
+            makeRequest ('get', 'chat/messages', {transmitter : data.id, receiver : $('#send').attr('name')}, function(data) {
+                if (data.valid) // el mensaje se envio
+                {
+                    addMessages(data.messages);
+                }
+            });
         }
         else {
             console.log("INVALID TOKEN");
@@ -41,7 +47,19 @@ $(function(){
             $('#upload').trigger('click');
         }
         if (this.id === "search"){
-            // Search
+            friend = this.name;
+            makeRequest ('get', 'lobby/validate', {token : window.sessionStorage.userToken}, function(data) {
+                if (data.valid) // se valida que el usuario si tenga el token valido
+                {
+                    console.log("VALID TOKEN");
+                    makeRequest ('get', 'chat/search', {transmitter : data.id, receiver : friend, word : $('#searchMessage').val()}, function(data) {
+                        if (data.valid) // el mensaje se envio
+                        {
+                            addMessages(data.messages);
+                        }
+                    });
+                }
+            });
         }
         if (this.id === "download"){
             fileName = this.name;
@@ -58,7 +76,7 @@ $(function(){
                 if (data.valid) // se valida que el usuario si tenga el token valido
                 {
                     console.log("VALID TOKEN");
-                    makeRequest ('get', 'lobby/messages', {transmitter : data.id, receiver : friend, both : true}, function(data) {
+                    makeRequest ('get', 'chat/messages', {transmitter : data.id, receiver : friend}, function(data) {
                         if (data.valid) // el mensaje se envio
                         {
                             addMessages(data.messages);
