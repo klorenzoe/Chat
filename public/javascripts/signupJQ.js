@@ -36,7 +36,7 @@ $(function(){
     {
         $.ajax({
             type: requestType,
-            url: 'http://192.168.43.167:3000/' + requestLink,
+            url: 'http://localhost:3000/' + requestLink,
             data: dataJSON,
             dataType: 'json',
             success : successFunction
