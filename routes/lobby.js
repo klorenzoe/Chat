@@ -131,8 +131,6 @@ router.post('/send', function (req, res, next) {
     });
   }
 
-
-
 });
 
 //Meotodo que retorna toda la lista de usarios
@@ -265,15 +263,19 @@ router.get('/download/:name', function (req, res, next) {
     methodName: "Descompressor"
   });
   Decompress('public\\files\\' + req.params.name, function (error, result) {
-    console.log('dentro del callback de descompress');
-    console.log(result);
-    res.download('public\\files\\' + result, function (error) {
-      console.log('Dentro del callback eliminar archivo descomprimirdo')
-      fileSystem.unlink('public\\files\\' + result);
-    });
-
+    if(error){
+      console.log('el archivo ya no se encuentra en el servidor');
+    }else{
+      res.download('public\\files\\' + result, function (error) {
+        fileSystem.unlink('public\\files\\' + result);
+        console.log('Descargado correctamente')
+      });
+    }
   });
 });
+
+
+
 
 
 module.exports = router;
