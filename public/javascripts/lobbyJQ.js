@@ -27,13 +27,17 @@ $(function () {
             document.location.href = '/chat/user/' + this.name;
         }
     });
+
+    $('#close').click(function(){
+        delete window.sessionStorage.userToken;
+    });
 });
 
 
 function makeRequest(requestType, requestLink, dataJSON, successFunction) {
     $.ajax({
         type: requestType,
-        url: 'http://192.168.43.167:3000/' + requestLink,
+        url: 'http://localhost:3000/' + requestLink,
         data: dataJSON,
         dataType: 'json',
         success: successFunction

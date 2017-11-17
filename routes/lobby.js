@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var edge = require('edge');
 const jwt = require('jsonwebtoken');
+var fileSystem = require('fs');
 const password = "xadfgbhknmkkhgrcbklkmopknnhvvffxjg";
 
 /* Database */
@@ -20,36 +21,27 @@ router.get('/', function (req, res, next) {
 
 
 router.post('/upload', function (req, res, next) {
-  if (!req.files.userFile){
-    res.json({valid : false});
+  if (!req.files.userFile) {
+    res.json({ valid: false });
     return;
   }
   console.log(req.files.userFile);
-  req.files.userFile.mv ('./public/files/' + req.files.userFile.name, function(error){
+  req.files.userFile.mv('./public/files/' + req.files.userFile.name, function (error) {
     let Compressor = edge.func({
       assemblyFile: "dlls\\HuffmanEncoding.dll",
       typeName: "HuffmanEncoding.Huffman",
       methodName: "Compressor"
     });
     console.log('public\\files\\' + req.files.userFile.name);
-    Compressor('public\\files\\' + req.files.userFile.name, function(error, result){
-      console.log('Dentro del callback de compressor');  
-      if(error) throw error;
-      let file = new messageCollection({
-          transmitter: req.files.transmitter, //2
-          receiver: req.files.receiver, //3
-          date: req.files.date,//4
-          text:  result,
-          isFile: true
-        });
-        console.log('guardado');
-        console.log(file);
-        res.json({valid : true});
+    Compressor('public\\files\\' + req.files.userFile.name, function (error, result) {
+      console.log('Dentro del callback de compressor');
+      if (error) throw error;
+      res.json({ valid: true, name: result });
     });
   });
 
-//.parse enviarselo al huffman y guardarlo en el .mv el archivo comprimido
-  
+  //.parse enviarselo al huffman y guardarlo en el .mv el archivo comprimido
+
 });
 
 //Se valida el token del usuario
@@ -86,24 +78,14 @@ router.post('/send', function (req, res, next) {
     typeName: "SDES.Class1",
     methodName: "Encrypt"
   });
-
-  var parameters = {
-    data: req.body.text,
-    password: password
-  };
-
-  encrypt(parameters, function (error, result) {
-    if (error) throw error;
-    console.log('este es el result');
-    console.log(result);
+  if (req.body.isFile) {
     let message = new messageCollection({
       transmitter: req.body.transmitter,
       receiver: req.body.receiver,
       date: req.body.date,
-      text: result,
-      isFile: false
+      text: req.body.text,
+      isFile: true
     });
-
     message.save(function (error, saved) {
       if (error) {
         res.json({ valid: false });
@@ -115,8 +97,41 @@ router.post('/send', function (req, res, next) {
         }
       }
     });
+  } else {
 
-  });
+    var parameters = {
+      data: req.body.text,
+      password: password
+    };
+
+    encrypt(parameters, function (error, result) {
+      if (error) throw error;
+      console.log('este es el result');
+      console.log(result);
+      let message = new messageCollection({
+        transmitter: req.body.transmitter,
+        receiver: req.body.receiver,
+        date: req.body.date,
+        text: result,
+        isFile: false
+      });
+
+      message.save(function (error, saved) {
+        if (error) {
+          res.json({ valid: false });
+        } else {
+          if (saved) {
+            console.log('Se guardó correctamente el elemento');
+            console.log(saved);
+            res.json({ valid: true });
+          }
+        }
+      });
+    });
+  }
+
+
+
 });
 
 //Meotodo que retorna toda la lista de usarios
@@ -125,14 +140,14 @@ router.post('/send', function (req, res, next) {
 router.get('/users', function (req, res, next) {
   console.log('entro a /users')
   let users = [];
-  userCollection.find( { userName : { $ne : req.query.id} }, function (err, found) {
+  userCollection.find({ userName: { $ne: req.query.id } }, function (err, found) {
     for (var u in found) {
       users.push({
         name: found[u].name,
         id: found[u].userName
       });
     }
-    
+
     res.json(users).end();
   });
 
@@ -167,53 +182,77 @@ router.get('/messages', function (req, res, next) {
     methodName: "Decrypt"
   });
 
-  
-if(req.query.both){
-  userTransmitter = req.query.transmitter;
-  userReceiver = req.query.receiver;
-  messageCollection.find({ $or: [{ transmitter: userTransmitter, receiver: userReceiver }, { transmitter: userReceiver, receiver: userTransmitter }]  }, null, { sort: { date: -1 } }, function (error, found) {
-    for (var m in found) {
-      console.log(m);
-      console.log(found[m]);
-      var parameters= { data: found[m].text, password: password };
 
-      decrypt(parameters, function (error, result) {
-        if (error) throw error;
-        console.log('algunos decifrados');
-        console.log(result);
-        myMessages.push({
-          transmitter: found[m].transmitter,
-          receiver: found[m].receiver,
-          date: found[m].date,
-          text: result
-        })
-      });
-    }
-    res.json({valid : true, messages : myMessages });
-  });
-}else{
-  messageCollection.find({ transmitter: userTransmitter, receiver: userReceiver }, null, { sort: { date:  -1 } }, function (error, found) {
-    for (var m in found) {
-      console.log(m);
-      console.log(found[m]);
-      var parameters= { data: found[m].text, password: password };
+  if (req.query.both) {
+    userTransmitter = req.query.transmitter;
+    userReceiver = req.query.receiver;
+    messageCollection.find({ $or: [{ transmitter: userTransmitter, receiver: userReceiver }, { transmitter: userReceiver, receiver: userTransmitter }] }, null, { sort: { date: -1 } }, function (error, found) {
+      console.log('found');
+      console.log(found);
+      for (var m in found) {
+        console.log(m);
+        if (found[m].isFile) {
+          myMessages.push({
+            transmitter: found[m].transmitter,
+            receiver: found[m].receiver,
+            date: found[m].date,
+            text: found[m].text,
+            isFile: true
+          })
+        } else {
+          var parameters = { data: found[m].text, password: password };
+          decrypt(parameters, function (error, result) {
+            if (error) throw error;
+            console.log('algunos decifrados');
+            console.log(result);
 
-      decrypt(parameters, function (error, result) {
-        if (error) throw error;
-        console.log('algunos decifrados');
-        console.log(result);
-        myMessages.push({
-          transmitter: found[m].transmitter,
-          receiver: found[m].receiver,
-          date: found[m].date,
-          text: result
-        })
-      });
-    }
-    res.json({valid : true, messages : myMessages });
-  });
-}
-  
+            myMessages.push({
+              transmitter: found[m].transmitter,
+              receiver: found[m].receiver,
+              date: found[m].date,
+              text: result,
+              isFile: false
+            }); //push
+          });//decrypt
+        };//if
+      };//for
+      res.json({ valid: true, messages: myMessages });
+    });
+  } else {
+    messageCollection.find({ transmitter: userTransmitter, receiver: userReceiver }, null, { sort: { date: -1 } }, function (error, found) {
+      for (var m in found) {
+        console.log(m);
+        console.log(found[m]);
+
+        if (found[m].isFile) {
+          myMessages.push({
+            transmitter: found[m].transmitter,
+            receiver: found[m].receiver,
+            date: found[m].date,
+            text: found[m].text,
+            isFile: true
+          })
+        } else {
+          var parameters = { data: found[m].text, password: password };
+
+          decrypt(parameters, function (error, result) {
+            if (error) throw error;
+            console.log('algunos decifrados');
+            console.log(result);
+            myMessages.push({
+              transmitter: found[m].transmitter,
+              receiver: found[m].receiver,
+              date: found[m].date,
+              text: result,
+              isFile: false
+            })
+          });
+        }//cierre else
+      }
+      res.json({ valid: true, messages: myMessages });
+    });
+  }
+
 });
 
 router.get('/download/:name', function (req, res, next) {
@@ -224,10 +263,14 @@ router.get('/download/:name', function (req, res, next) {
     typeName: "HuffmanEncoding.Huffman",
     methodName: "Descompressor"
   });
-  Decompress('public\\files\\' + req.params.name, function(error, result){
-      console.log('dentro del callback de descompress');
-      console.log(result);
-      res.download('public\\files\\' + result);
+  Decompress('public\\files\\' + req.params.name, function (error, result) {
+    console.log('dentro del callback de descompress');
+    console.log(result);
+    res.download('public\\files\\' + result, function (error) {
+      console.log('Dentro del callback eliminar archivo descomprimirdo')
+      fileSystem.unlink('public\\files\\' + result);
+    });
+
   });
 });
 
