@@ -76,7 +76,7 @@ router.post('/send', function (req, res, next) {
     methodName: "Encrypt"
   });
 
-  if (req.body.isFile==='true') {
+  if (req.body.isFile === 'true') {
     let message = new messageCollection({
       transmitter: req.body.transmitter,
       receiver: req.body.receiver,
@@ -206,9 +206,9 @@ router.get('/search', function (req, res, next) {
   //retornon una lista.
   console.log('SEARCHHHHHHHHHHH');
   console.log('COSAS QUE ME ENVIA');
-  console.log('transmitter: '+ req.query.transmitter);
-  console.log('receiver: '+ req.query.receiver);
-  console.log('palabra a buscar: '+ req.query.word);
+  console.log('transmitter: ' + req.query.transmitter);
+  console.log('receiver: ' + req.query.receiver);
+  console.log('palabra a buscar: ' + req.query.word);
   let myMessages = [];
   let encrypt = edge.func({
     assemblyFile: "dlls\\SDES-DLL.dll",
@@ -216,7 +216,9 @@ router.get('/search', function (req, res, next) {
     methodName: "Encrypt"
   });
   encrypt({ data: req.query.word, password: password }, function (err, search) {
-    messageCollection.find({transmitter: req.query.transmitter, receiver: req.query.receiver}, function (error, all) {
+    let userTransmitter = req.query.transmitter;
+    let userReceiver = req.query.receiver;
+    messageCollection.find({ $or: [{ transmitter: userTransmitter, receiver: userReceiver }, { transmitter: userReceiver, receiver: userTransmitter }] }, null, { sort: { date: -1 } }, function (error, all) {
       if (error) {
         throw error
       } else {
@@ -225,7 +227,7 @@ router.get('/search', function (req, res, next) {
           typeName: "SDES.Class1",
           methodName: "Decrypt"
         });
-        let found = all.filter(function(x){return x.text.includes(search);});
+        let found = all.filter(function (x) { return x.text.includes(search); });
 
         for (var m in found) {
           decrypt({ data: found[m].text, password: password }, function (er, result) {
