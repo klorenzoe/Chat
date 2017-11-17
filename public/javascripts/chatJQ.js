@@ -10,6 +10,7 @@ $(function(){
         }
         else {
             console.log("INVALID TOKEN");
+            window.location.href = "login";
         }
     });
     
@@ -39,7 +40,19 @@ $(function(){
             // Search
         }
         if (this.id === "all"){
-            addMessages([{transmitter : "Joe", receiver : "thisShouldBeTheID", date : Date.now(), text : $('#message').val(), isFile : true}, {transmitter : "thisShouldBeTheID", receiver : "Joe", date : Date.now(), text : $('#message').val(), isFile : true}]);
+            friend = this.name;
+            makeRequest ('get', 'lobby/validate', {token : window.sessionStorage.userToken}, function(data) {
+                if (data.valid) // se valida que el usuario si tenga el token valido
+                {
+                    console.log("VALID TOKEN");
+                    makeRequest ('get', 'lobby/messages', {transmitter : data.id, receiver : friend, both : true}, function(data) {
+                        if (data.valid) // el mensaje se envio
+                        {
+                            addMessages(data.messages);
+                        }
+                    });
+                }
+            });
         }
       });
 
@@ -73,7 +86,7 @@ function makeRequest(requestType, requestLink, dataJSON, successFunction)
 {
     $.ajax({
         type: requestType,
-        url: 'http://localhost:3000/' + requestLink,
+        url: 'http://192.168.43.167:3000/' + requestLink,
         data: dataJSON,
         dataType: 'json',
         success : successFunction
@@ -84,7 +97,7 @@ function uploadFile(fileData, successFunction)
 {
     $.ajax({
         type : 'post',
-        url : 'http://localhost:3000/chat/upload',
+        url : 'http://192.168.43.167:3000/chat/upload',
         data : fileData,
         asycn : true, 
         contentType: false,
@@ -95,7 +108,7 @@ function uploadFile(fileData, successFunction)
 }
 
 function addMessages(messagesJSON){
-    //$('#messages').empty();
+    $('#messages').empty();
     $.each(messagesJSON, function(index, value){
         $('#messages').append(getPanel(value, $('#send').attr('name')));
     });
