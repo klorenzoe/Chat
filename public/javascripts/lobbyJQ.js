@@ -27,6 +27,10 @@ $(function () {
             document.location.href = '/chat/user/' + this.name;
         }
     });
+
+    $('#close').click(function(){
+        delete window.sessionStorage.userToken;
+    });
 });
 
 

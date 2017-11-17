@@ -21,7 +21,7 @@ $(function(){
                 if (data.valid) // se valida que el usuario si tenga el token valido
                 {
                     console.log("VALID TOKEN");
-                    makeRequest ('post', 'lobby/send', {transmitter : data.id, receiver : friend, date : Date.now(), text : $('#message').val()}, function(data) {
+                    makeRequest ('post', 'lobby/send', {transmitter : data.id, receiver : friend, date : Date.now(), text : $('#message').val(), isFile : false}, function(data) {
                         if (data.valid) // el mensaje se envio
                         {
                             console.log("MESSAGE SENT");
@@ -38,6 +38,15 @@ $(function(){
         }
         if (this.id === "search"){
             // Search
+        }
+        if (this.id === "download"){
+            fileName = this.name;
+            makeRequest ('get', 'lobby/validate', {token : window.sessionStorage.userToken}, function(data) {
+                if (data.valid) // se valida que el usuario si tenga el token valido
+                {
+                    window.location.href = '/chat/download/' + fileName;
+                }
+            });
         }
         if (this.id === "all"){
             friend = this.name;
@@ -60,22 +69,20 @@ $(function(){
         makeRequest ('get', 'lobby/validate', {token : window.sessionStorage.userToken}, function(data) {
             if (data.valid) // se valida que el usuario si tenga el token valido
             {
+                let user = data.id;
                 var uFile = new FormData();
                 
-                uFile.append('userFile', $('#upload')[0].files[0]);
-                uFile.append('transmitter', data.id);
-                uFile.append('receiver', $("#send").attr('name'));
-                uFile.append('date', Date.now());                
+                uFile.append('userFile', $('#upload')[0].files[0]);              
                 
                 uploadFile(uFile, function(data){
                     if(data.valid){
-                        console.log("UPLOAD");
-                        //Aqui se mostrara el mensaje de que el archivo ya esta listo
-                        alert("Archivo listo");
+                        console.log("UPLOADING");
+                        makeRequest ('post', 'lobby/send', {transmitter : user, receiver : $('#send').attr('name'), date : Date.now(), text : data.name, isFile : true}, function(data) {});
+                        $.notify("Archivo enviado.", 'success');
                     }
                 });
                 // Aqui voy a mostrar un mensaje emergente avisando al usuario cuando el archivo este listo
-                alert("Subiendo archivo");
+                $.notify("Cargando archivo.", 'info');
             }
         });
     });
@@ -124,7 +131,7 @@ function getPanel(messageJSON, transmitter){
             <div class="card-body">
             <h6 class="card-title">${messageJSON.transmitter}</h6>
             <p class="card-text"> Te han enviado un archivo.</p>     
-            <button name="${messageJSON.text}" class="btn btn-warning" id="donwload">Descargar</a>   
+            <button name="${messageJSON.text}" class="btn btn-warning" id="download">Descargar</a>   
             </div></div></div>`
         }
         else {
@@ -143,7 +150,7 @@ function getPanel(messageJSON, transmitter){
             <div class="card-body">
             <h6 class="card-title">${messageJSON.transmitter}</h6>
             <p class="card-text"> Tú has enviado un archivo.</p>     
-            <button name="${messageJSON.text}" class="btn btn-warning" id="donwload">Descargar</a>   
+            <button name="${messageJSON.text}" class="btn btn-warning" id="download">Descargar</a>   
             </div></div></div>`
         }
         else {
