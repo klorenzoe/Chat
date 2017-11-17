@@ -78,7 +78,7 @@ router.post('/send', function (req, res, next) {
     typeName: "SDES.Class1",
     methodName: "Encrypt"
   });
-  if (req.body.isFile) {
+  if (req.body.isFile===true) {
     let message = new messageCollection({
       transmitter: req.body.transmitter,
       receiver: req.body.receiver,
@@ -91,7 +91,7 @@ router.post('/send', function (req, res, next) {
         res.json({ valid: false });
       } else {
         if (saved) {
-          console.log('Se guardó correctamente el elemento');
+          console.log('es un archivo y esto fue lo que guardó');
           console.log(saved);
           res.json({ valid: true });
         }
@@ -106,8 +106,6 @@ router.post('/send', function (req, res, next) {
 
     encrypt(parameters, function (error, result) {
       if (error) throw error;
-      console.log('este es el result');
-      console.log(result);
       let message = new messageCollection({
         transmitter: req.body.transmitter,
         receiver: req.body.receiver,
@@ -121,7 +119,7 @@ router.post('/send', function (req, res, next) {
           res.json({ valid: false });
         } else {
           if (saved) {
-            console.log('Se guardó correctamente el elemento');
+            console.log('es un mensaje y esto fue lo que guardó');
             console.log(saved);
             res.json({ valid: true });
           }
@@ -247,7 +245,7 @@ router.get('/search/:word', function (req, res, next) {
     methodName: "Encrypt"
   });
 
-  encrypt({data: req.params.word, password:password}, function (err, search) {
+  encrypt({ data: req.params.word, password: password }, function (err, search) {
     messageCollection.find({ $or: [{ message: { $regex: '^' + search } }, { message: { $regex: search + '^' } }, { message: { $regex: '^' + search + '^' } }, { message: search }] }, function (error, found) {
       if (error) {
         throw error
@@ -257,9 +255,9 @@ router.get('/search/:word', function (req, res, next) {
           typeName: "SDES.Class1",
           methodName: "Decrypt"
         });
-        
+
         for (var m in found) {
-          decrypt({data: found[m].text, password: password}, function(er, result){
+          decrypt({ data: found[m].text, password: password }, function (er, result) {
             myMessages.push({
               transmitter: found[m].transmitter,
               receiver: found[m].receiver,
