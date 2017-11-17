@@ -78,20 +78,12 @@ router.post('/send', function (req, res, next) {
     typeName: "SDES.Class1",
     methodName: "Encrypt"
   });
-<<<<<<< HEAD
-=======
-
->>>>>>> 953772d73f3d8a4170412dc8a1d93a19e403cd92
   if (req.body.isFile) {
     let message = new messageCollection({
       transmitter: req.body.transmitter,
       receiver: req.body.receiver,
       date: req.body.date,
-<<<<<<< HEAD
       text: req.body.text,
-=======
-      text: result,
->>>>>>> 953772d73f3d8a4170412dc8a1d93a19e403cd92
       isFile: true
     });
     message.save(function (error, saved) {
