@@ -72,13 +72,15 @@ router.get('/user/:user', function (req, res, next) {
 //Metodo que envia el mensaje
 router.post('/send', function (req, res, next) {
   //Llamo al método para cifrar de la DLL SDES
-  console.log('llama al metodo de la dll encrypt');
   var encrypt = edge.func({
     assemblyFile: "dlls\\SDES-DLL.dll",
     typeName: "SDES.Class1",
     methodName: "Encrypt"
   });
-  if (req.body.isFile===true) {
+
+  if (req.body.isFile==='true') {
+    console.log('lo que envio abraham fue: '+ req.body.isFile);
+    console.log('Entró donde debiese entrar con TRUE');
     let message = new messageCollection({
       transmitter: req.body.transmitter,
       receiver: req.body.receiver,
@@ -90,15 +92,12 @@ router.post('/send', function (req, res, next) {
       if (error) {
         res.json({ valid: false });
       } else {
-        if (saved) {
-          console.log('es un archivo y esto fue lo que guardó');
-          console.log(saved);
-          res.json({ valid: true });
-        }
+        res.json({ valid: true });
       }
     });
   } else {
-
+    console.log('lo que envio abraham fue: '+ req.body.isFile);
+    console.log('Entró donde debiese entrar con FALSE');
     var parameters = {
       data: req.body.text,
       password: password
@@ -118,11 +117,7 @@ router.post('/send', function (req, res, next) {
         if (error) {
           res.json({ valid: false });
         } else {
-          if (saved) {
-            console.log('es un mensaje y esto fue lo que guardó');
-            console.log(saved);
-            res.json({ valid: true });
-          }
+          res.json({ valid: true });
         }
       });
     });
