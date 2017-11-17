@@ -1,5 +1,9 @@
 $(function(){
 
+    if (!window.sessionStorage.userToken){
+        window.location.href = "/";
+        return;
+    }
 
     makeRequest ('get', 'lobby/validate', {token : window.sessionStorage.userToken}, function(data) {
         if (data.valid) // se valida que el usuario si tenga el token valido
@@ -93,7 +97,7 @@ function makeRequest(requestType, requestLink, dataJSON, successFunction)
 {
     $.ajax({
         type: requestType,
-        url: 'http://localhost:3000/' + requestLink,
+        url: `http://${window.location.hostname}:3000/` + requestLink,
         data: dataJSON,
         dataType: 'json',
         success : successFunction
@@ -104,7 +108,7 @@ function uploadFile(fileData, successFunction)
 {
     $.ajax({
         type : 'post',
-        url : 'http://localhost:3000/chat/upload',
+        url : `http://${window.location.hostname}:3000/` + 'chat/upload',
         data : fileData,
         asycn : true, 
         contentType: false,

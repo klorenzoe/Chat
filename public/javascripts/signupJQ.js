@@ -1,7 +1,9 @@
 $(function(){
 
     $('#error').hide();
-
+    if (window.sessionStorage.userToken){
+        window.location.href = "/lobby";
+    }
     //Leemos algunos eventos
     $('#signup').click(function(){
         $('#error').fadeOut();
@@ -36,7 +38,7 @@ $(function(){
     {
         $.ajax({
             type: requestType,
-            url: 'http://localhost:3000/' + requestLink,
+            url: `http://${window.location.hostname}:3000/` + requestLink,
             data: dataJSON,
             dataType: 'json',
             success : successFunction
