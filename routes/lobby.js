@@ -78,7 +78,7 @@ router.post('/send', function (req, res, next) {
     typeName: "SDES.Class1",
     methodName: "Encrypt"
   });
-  if (req.body.isFile) {
+  if (req.body.isFile===true) {
     let message = new messageCollection({
       transmitter: req.body.transmitter,
       receiver: req.body.receiver,
@@ -91,7 +91,7 @@ router.post('/send', function (req, res, next) {
         res.json({ valid: false });
       } else {
         if (saved) {
-          console.log('Se guardó correctamente el elemento');
+          console.log('es un archivo y esto fue lo que guardó');
           console.log(saved);
           res.json({ valid: true });
         }
@@ -106,8 +106,6 @@ router.post('/send', function (req, res, next) {
 
     encrypt(parameters, function (error, result) {
       if (error) throw error;
-      console.log('este es el result');
-      console.log(result);
       let message = new messageCollection({
         transmitter: req.body.transmitter,
         receiver: req.body.receiver,
@@ -121,7 +119,7 @@ router.post('/send', function (req, res, next) {
           res.json({ valid: false });
         } else {
           if (saved) {
-            console.log('Se guardó correctamente el elemento');
+            console.log('es un mensaje y esto fue lo que guardó');
             console.log(saved);
             res.json({ valid: true });
           }
@@ -129,8 +127,6 @@ router.post('/send', function (req, res, next) {
       });
     });
   }
-
-
 
 });
 
@@ -174,7 +170,7 @@ router.get('/messages', function (req, res, next) {
   let userReceiver = req.query.receiver;
   let myMessages = [];
   console.log('Empezó la búsqueda');
-  //{ $or: [{ transmitter: user1, receiver: user2 }, { transmitter: user2, receiver: user1 }] 
+  //{ $or: [{ transmitter: user1, receiver: user2 }, { transmitter: user2, receiver: user1 }]} 
 
   var decrypt = edge.func({
     assemblyFile: "dlls\\SDES-DLL.dll",
@@ -182,76 +178,40 @@ router.get('/messages', function (req, res, next) {
     methodName: "Decrypt"
   });
 
+  userTransmitter = req.query.transmitter;
+  userReceiver = req.query.receiver;
+  messageCollection.find({ $or: [{ transmitter: userTransmitter, receiver: userReceiver }, { transmitter: userReceiver, receiver: userTransmitter }] }, null, { sort: { date: -1 } }, function (error, found) {
+    console.log('found');
+    console.log(found);
+    for (var m in found) {
+      console.log(m);
+      if (found[m].isFile) {
+        myMessages.push({
+          transmitter: found[m].transmitter,
+          receiver: found[m].receiver,
+          date: found[m].date,
+          text: found[m].text,
+          isFile: true
+        })
+      } else {
+        var parameters = { data: found[m].text, password: password };
+        decrypt(parameters, function (error, result) {
+          if (error) throw error;
+          console.log('algunos decifrados');
+          console.log(result);
 
-  if (req.query.both) {
-    userTransmitter = req.query.transmitter;
-    userReceiver = req.query.receiver;
-    messageCollection.find({ $or: [{ transmitter: userTransmitter, receiver: userReceiver }, { transmitter: userReceiver, receiver: userTransmitter }] }, null, { sort: { date: -1 } }, function (error, found) {
-      console.log('found');
-      console.log(found);
-      for (var m in found) {
-        console.log(m);
-        if (found[m].isFile) {
           myMessages.push({
             transmitter: found[m].transmitter,
             receiver: found[m].receiver,
             date: found[m].date,
-            text: found[m].text,
-            isFile: true
-          })
-        } else {
-          var parameters = { data: found[m].text, password: password };
-          decrypt(parameters, function (error, result) {
-            if (error) throw error;
-            console.log('algunos decifrados');
-            console.log(result);
-
-            myMessages.push({
-              transmitter: found[m].transmitter,
-              receiver: found[m].receiver,
-              date: found[m].date,
-              text: result,
-              isFile: false
-            }); //push
-          });//decrypt
-        };//if
-      };//for
-      res.json({ valid: true, messages: myMessages });
-    });
-  } else {
-    messageCollection.find({ transmitter: userTransmitter, receiver: userReceiver }, null, { sort: { date: -1 } }, function (error, found) {
-      for (var m in found) {
-        console.log(m);
-        console.log(found[m]);
-
-        if (found[m].isFile) {
-          myMessages.push({
-            transmitter: found[m].transmitter,
-            receiver: found[m].receiver,
-            date: found[m].date,
-            text: found[m].text,
-            isFile: true
-          })
-        } else {
-          var parameters = { data: found[m].text, password: password };
-
-          decrypt(parameters, function (error, result) {
-            if (error) throw error;
-            console.log('algunos decifrados');
-            console.log(result);
-            myMessages.push({
-              transmitter: found[m].transmitter,
-              receiver: found[m].receiver,
-              date: found[m].date,
-              text: result,
-              isFile: false
-            })
-          });
-        }//cierre else
-      }
-      res.json({ valid: true, messages: myMessages });
-    });
-  }
+            text: result,
+            isFile: false
+          }); //push
+        });//decrypt
+      };//if
+    };//for
+    res.json({ valid: true, messages: myMessages });
+  });
 
 });
 
@@ -264,15 +224,56 @@ router.get('/download/:name', function (req, res, next) {
     methodName: "Descompressor"
   });
   Decompress('public\\files\\' + req.params.name, function (error, result) {
-    console.log('dentro del callback de descompress');
-    console.log(result);
-    res.download('public\\files\\' + result, function (error) {
-      console.log('Dentro del callback eliminar archivo descomprimirdo')
-      fileSystem.unlink('public\\files\\' + result);
-    });
-
+    if (error) {
+      console.log('el archivo ya no se encuentra en el servidor');
+    } else {
+      res.download('public\\files\\' + result, function (error) {
+        fileSystem.unlink('public\\files\\' + result);
+        console.log('Descargado correctamente')
+      });
+    }
   });
 });
+
+router.get('/search/:word', function (req, res, next) {
+  //Envian una palabra, cifro esa palabra y despues busco todos los mensajes con esa palabra.
+  //retornon una lista.
+  let myMessages = [];
+  let encrypt = edge.func({
+    assemblyFile: "dlls\\SDES-DLL.dll",
+    typeName: "SDES.Class1",
+    methodName: "Encrypt"
+  });
+
+  encrypt({ data: req.params.word, password: password }, function (err, search) {
+    messageCollection.find({ $or: [{ message: { $regex: '^' + search } }, { message: { $regex: search + '^' } }, { message: { $regex: '^' + search + '^' } }, { message: search }] }, function (error, found) {
+      if (error) {
+        throw error
+      } else {
+        let decrypt = edge.func({
+          assemblyFile: "dlls\\SDES-DLL.dll",
+          typeName: "SDES.Class1",
+          methodName: "Decrypt"
+        });
+
+        for (var m in found) {
+          decrypt({ data: found[m].text, password: password }, function (er, result) {
+            myMessages.push({
+              transmitter: found[m].transmitter,
+              receiver: found[m].receiver,
+              date: found[m].date,
+              text: result,
+              isFile: false
+            }); //push
+          });//decrypt
+        }; //for
+      }; //else
+    });//found
+  });//encrypt
+});
+
+
+
 
 
 module.exports = router;
