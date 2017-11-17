@@ -12,6 +12,7 @@
     <div class="container text-center">
             <div class="sticky-top bg-light">
               <h3 class="display-3">Usuarios </h3>
+              <a href="/lobby" id="close">Cerrar sesión</a></p>
             </div>
             <hr>
             <div class="container-fluid">

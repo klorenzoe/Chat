@@ -4,6 +4,7 @@
     <title>Inicio</title>
     <script src="/javascripts/jquery-3.2.1.js"></script>
     <script src="/javascripts/chatJQ.js"></script>
+    <script src="/javascripts/notify.min.js"></script>
     <link rel="stylesheet" href="/stylesheets/font-awesome.min.css">
     <link rel='stylesheet' href='/stylesheets/bootstrap.css' />
   </head>
