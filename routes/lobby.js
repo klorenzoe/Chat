@@ -239,6 +239,7 @@ router.get('/search', function (req, res, next) {
             }); //push
           });//decrypt
         }; //for
+        res.json({ valid: true, messages: myMessages });
       }; //else
     });//found
   });//encrypt
