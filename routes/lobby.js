@@ -230,7 +230,7 @@ router.get('/download/:name', function (req, res, next) {
   });
 });
 
-router.get('/search/:word', function (req, res, next) {
+router.get('/search', function (req, res, next) {
   //Envian una palabra, cifro esa palabra y despues busco todos los mensajes con esa palabra.
   //retornon una lista.
   let myMessages = [];
@@ -240,10 +240,11 @@ router.get('/search/:word', function (req, res, next) {
     methodName: "Encrypt"
   });
 
-  encrypt({ data: req.params.word, password: password }, function (err, search) {
+  encrypt({ data: req.query.word, password: password }, function (err, search) {
     messageCollection.find({ $or: [{ message: { $regex: '^' + search } }, { message: { $regex: search + '^' } }, { message: { $regex: '^' + search + '^' } }, { message: search }] }, function (error, found) {
       if (error) {
-        throw error
+        throw error;
+        res.json({valid : false}).end();
       } else {
         let decrypt = edge.func({
           assemblyFile: "dlls\\SDES-DLL.dll",
@@ -261,7 +262,9 @@ router.get('/search/:word', function (req, res, next) {
               isFile: false
             }); //push
           });//decrypt
-        }; //for
+        };
+        
+        res.json({valid : true, messages : myMessages}).end();
       }; //else
     });//found
   });//encrypt
