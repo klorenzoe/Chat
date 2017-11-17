@@ -247,7 +247,7 @@ router.get('/search/:word', function (req, res, next) {
     methodName: "Encrypt"
   });
 
-  encrypt({data: req.query.find, password:password}, function (err, search) {
+  encrypt({data: req.params.word, password:password}, function (err, search) {
     messageCollection.find({ $or: [{ message: { $regex: '^' + search } }, { message: { $regex: search + '^' } }, { message: { $regex: '^' + search + '^' } }, { message: search }] }, function (error, found) {
       if (error) {
         throw error
