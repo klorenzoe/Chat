@@ -240,9 +240,7 @@ router.get('/search', function (req, res, next) {
 });
 
 router.get('/count', function (req, res, next) {
-  let A = req.query.transmitter;
-  let B = req.query.receiver;
-  messageCollection.find({$or:[{transmitter: A, receiver: B},{transmitter: B, receiver: A}]}).count(function(error, now){
+  messageCollection.find({$or:[{transmitter: req.query.transmitter, receiver: req.query.receiver}, {transmitter: req.query.receiver, receiver: req.query.transmitter}]}).count(function(error, now){
     res.json({ valid: true, count: now });
   });
 });

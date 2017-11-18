@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/stylesheets/font-awesome.min.css">
     <link rel='stylesheet' href='/stylesheets/bootstrap.css' />
   </head>
-  <body style='margin-top: 75px; margin-bottom: 75px;'>
+  <body style='margin-top: 75px; margin-bottom: 75px; background-image:  url(/images/wallpaper.jpg); '>
     <input type="file" id="upload" name="userFile" />  
     <div class="container">
             <div class="fixed-top">
