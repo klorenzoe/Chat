@@ -10,7 +10,7 @@
   </head>
   <body>
     <div class="container text-center">
-            <div class="sticky-top bg-light">
+            <div class="sticky-top">
               <h3 class="display-3" id="userTag"></h3>
               <a href="/lobby" id="close">Cerrar sesión</a></p>
             </div>

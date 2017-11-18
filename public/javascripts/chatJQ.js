@@ -71,6 +71,7 @@ $(function(){
         }
         if (this.id === "download"){
             $.notify("Preparando la descarga del archivo.", 'info');
+            let fileName = this.name;
             makeRequest ('get', 'lobby/validate', {token : window.sessionStorage.userToken}, function(data) {
                 if (data.valid) // se valida que el usuario si tenga el token valido
                 {
